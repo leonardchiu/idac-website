@@ -62,7 +62,7 @@
             <textarea id="message" name="message" rows="4" class="block w-full shadow-sm py-3 px-4 placeholder-gray-500 focus:ring-green-500 focus:border-green-500 border border-gray-300 rounded-md" placeholder="Message" x-model="formData.message"></textarea>
           </div>
           <div>
-            <button type="submit" x-text="buttonLabel" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            <button type="submit" x-text="buttonLabel" x-bind:disabled="buttonStatus" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
             </button>
           </div>
           <p x-text="status"></p>
@@ -161,6 +161,7 @@
       },
       status: '',
       buttonLabel: 'Submit',
+      buttonStatus: false,
 
     submitData() {
       this.buttonLabel = 'Loading....';
@@ -177,7 +178,9 @@
         body: JSON.stringify(this.formData) 
       })
       .then(() => {
-        this.status = 'Message Sent!'
+        this.status = 'Message Sent! 🎉'
+        this.buttonLabel = 'Done! ❤️'
+        this.buttonStatus = true
       })
       .catch(() => {
         this.status = 'Ooops... Something went wrong! Message not sent! Please retry!'
