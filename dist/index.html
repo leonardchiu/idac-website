@@ -2,7 +2,8 @@
 <html>
  <head>
   <title>IDAC Management</title>
-  <link rel="stylesheet" href="/index.24809a1d.css"><script src="/index.d56a3cb1.js" defer="">
+  <link rel="stylesheet" href="/index.24809a1d.css"><script src="https://www.google.com/recaptcha/api.js"></script>
+  <script src="/index.d56a3cb1.js" defer="">
 </script></head>
  <body>
   <!-- This example requires Tailwind CSS v2.0+ -->
@@ -59,8 +60,7 @@
             <textarea id="message" name="message" rows="4" class="block w-full shadow-sm py-3 px-4 placeholder-gray-500 focus:ring-green-500 focus:border-green-500 border border-gray-300 rounded-md" placeholder="Message" x-model="formData.message"></textarea>
           </div>
           <div>
-            <button type="submit" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-              Submit
+            <button type="submit" x-text="buttonLabel" class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-green-700 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
             </button>
           </div>
           <p x-text="status"></p>
@@ -146,29 +146,52 @@
 
  </body>
 
+<script src="https://www.google.com/recaptcha/api.js?render=6LfNoP8cAAAAAOgc8MJd8jZ0WyCPmq4d3PoU9myk"></script>
 <script>function formSubmit() {
     return {
         formData: {
             fullName: '',
             email: '',
             phone: '',
-            message: ''
+            message: '',
+            recaptcha: ''
         },
         status: '',
+        buttonLabel: 'Submit',
         submitData () {
+            this.buttonLabel = 'Loading....';
+            this.loading = 'true';
             this.status = '';
-            fetch('https://hooks.zapier.com/hooks/catch/324249/bhzznv5/', {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this.formData)
-            }).then(()=>{
-                this.status = 'Message Sent!';
-            }).catch(()=>{
-                this.status = 'Ooops... Something went wrong! Message not sent! Please retry!';
+            grecaptcha.ready(()=>{
+                grecaptcha.execute('6LfNoP8cAAAAAOgc8MJd8jZ0WyCPmq4d3PoU9myk', {
+                    action: 'submit'
+                }).then((token)=>{
+                    this.formData.recaptcha = token;
+                }).then(fetch('https://hooks.zapier.com/hooks/catch/324249/bhzznv5/', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.formData)
+                }).then(()=>{
+                    this.status = 'Message Sent!';
+                }).catch(()=>{
+                    this.status = 'Ooops... Something went wrong! Message not sent! Please retry!';
+                }));
             });
+        // fetch('https://hooks.zapier.com/hooks/catch/324249/bhzznv5/', {
+        //   method: 'POST',
+        //   mode: 'no-cors',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(this.formData) 
+        // })
+        // .then(() => {
+        //   this.status = 'Message Sent!'
+        // })
+        // .catch(() => {
+        //   this.status = 'Ooops... Something went wrong! Message not sent! Please retry!'
+        // })  
         }
     };
 }
